@@ -88,11 +88,14 @@ int main(void) {
                 break;
             case 7: // rm
             {
-                std::string fileName = userCommand;
-                fileName.erase(0,3);
-                if (!filesystem.removeFile(fileName))
+                std::string fullPath = userCommand;
+                fullPath.erase(0,3);
+                if (fullPath.length() > 0)
                 {
-                    std::cout << "rm: " << fileName << ": Could not find file." << std::endl;
+                    if (!filesystem.removeFile(fullPath))
+                    {
+                        std::cout << "rm: " << fullPath << ": Could not find file." << std::endl;
+                    }
                 }
             }
                 break;

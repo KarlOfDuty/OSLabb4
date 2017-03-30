@@ -55,24 +55,35 @@ void FileSystem::createFolder(string name)
 bool FileSystem::removeFile(string name)
 {
     bool fileFound = false;
-    vector<Node*> allChildren = this->currentDir->getAllChildren();
+    int lastSlash = -1;
+    for (size_t i = 0; i < name.length(); i++)
+    {
+        if(name[i] == '/')
+        {
+            lastSlash = i;
+        }
+    }
+    std::string fileName = name;
+    fileName.erase(0,lastSlash+1);
+    Node* dir = getPath(name.erase(lastSlash+1));
+    vector<Node*> allChildren = dir->getAllChildren();
     for (size_t i = 0; i < allChildren.size(); i++)
     {
-        if (allChildren.at(i)->getName() == name)
+        if (allChildren.at(i)->getName() == fileName)
         {
             if (!allChildren.at(i)->isFolder())
             {
                 fileFound = true;
                 Node *temp = allChildren.at(i);
                 this->isEmpty[temp->getData()] = true;
-                std::cout << "temp->getdata() = " << temp->getData() << std::endl;
-                //std::cout << "FOUND : " << allChildren.at(i)->getName() << std::endl;
+                //std::cout << "temp->getdata() = " << temp->getData() << std::endl;
                 currentDir->removeChildAt(i);
                 delete temp;
             }
             else
             {
                 std::cout << "Cannot remove '" << name << "': Is a directory." << std::endl;
+                fileFound = true;
             }
         }
     }
