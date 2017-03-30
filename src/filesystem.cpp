@@ -76,8 +76,8 @@ bool FileSystem::removeFile(string name)
                 fileFound = true;
                 Node *temp = allChildren.at(i);
                 this->isEmpty[temp->getData()] = true;
-                //std::cout << "temp->getdata() = " << temp->getData() << std::endl;
-                currentDir->removeChildAt(i);
+                std::cout << "temp->getdata() = " << temp->getData() << std::endl;
+                dir->removeChildAt(i);
                 delete temp;
             }
             else
