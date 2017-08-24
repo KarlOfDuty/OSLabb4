@@ -38,7 +38,7 @@ public:
     /* Function will move the current location to a specified location in the filesystem */
     void goToFolder(Node* path);
 
-	//vector<string> readPath(stringstream &path);
+	vector<string> readPath(stringstream &path);
     /* This function will get all the files and folders in the specified folder */
     // listDir(...);
     //void listDir();

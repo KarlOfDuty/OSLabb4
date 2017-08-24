@@ -104,13 +104,14 @@ int main(void) {
                 break;
             case 11: // mkdir
             {
-                std::string folderName = userCommand;
-                folderName.erase(0,6);
+                std::string folderName = userCommand.erase(0,6);
                 filesystem.createFolder(folderName);
+				std::cout << "Directory created." << std::endl;
                 break;
             }
             case 12: // cd
             {
+				//Moves to specified folder
                 userCommand = userCommand.erase(0,3);
                 if (userCommand.length() > 0)
                 {
@@ -120,7 +121,7 @@ int main(void) {
                     }
                     else
                     {
-                        std::cout << "Folder not found." << std::endl;
+                        std::cout << "Item does not exist or is not a directory" << std::endl;
                     }
                 }
                 else
