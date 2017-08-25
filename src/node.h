@@ -23,6 +23,7 @@ private:
     void createChild(Node *child);
     Node* getParent();
     Node* getChild(string childName);
+	Node* getChildAt(int index);
     vector<Node*> getAllChildren();
     vector<string> getAllChildrenAsString();
     string asString();

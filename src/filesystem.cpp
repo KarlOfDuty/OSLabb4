@@ -2,27 +2,28 @@
 #include <sstream>
 FileSystem::FileSystem()
 {
-    //mMemblockDevice = MemblockDevice();
+	//mMemblockDevice = MemblockDevice();
     root = new Node();
     currentDir = root;
     for (size_t i = 0; i < 250; i++)
     {
         isEmpty[i] = true;
     }
-    Node *temp = new Node("folder1",-1,root);
-    temp->createChild(new Node("folder2",-1,temp));
-    root->createChild(temp);
-    root->createChild(new Node("hejsan"));
-    root->createChild(new Node("hejsan2"));
-    root->createChild(new Node("hejsan3"));
-    root->createChild(new Node("hejsan4"));
-    root->createChild(new Node("file", 10));
+    // Node *temp = new Node("folder1",-1,root);
+    // temp->createChild(new Node("folder2",-1,temp));
+    // root->createChild(temp);
+    // root->createChild(new Node("hejsan",-1,root));
+    // root->createChild(new Node("hejsan2",-1,root));
+    // root->createChild(new Node("hejsan3",-1,root));
+    // root->createChild(new Node("hejsan4",-1,root));
+    // root->createChild(new Node("file", 10, root));
 }
 
 FileSystem::~FileSystem()
 {
-
+	delete root;
 }
+//Creates a new file
 void FileSystem::createFile(string name, Node* path)
 {
     int blockLocation = -1;
@@ -47,11 +48,13 @@ void FileSystem::createFile(string name, Node* path)
 
     }
 }
+//Creates a new folder
 void FileSystem::createFolder(string name)
 {
     Node *folder = new Node(name,-1,currentDir);
     currentDir->createChild(folder);
 }
+//Removes a file
 bool FileSystem::removeFile(string name)
 {
     bool fileFound = false;
@@ -78,6 +81,7 @@ bool FileSystem::removeFile(string name)
     }
     return fileFound;
 }
+//Removes a folder if empty
 bool FileSystem::removeFolder(string name)
 {
     bool folderFound = false;
@@ -104,32 +108,19 @@ bool FileSystem::removeFolder(string name)
     }
     return folderFound;
 }
+//Makes the current folder the node provided
 void FileSystem::goToFolder(Node* path)
 {
-    currentDir = path;
-    /*
-	stringstream path(name);
-	vector<string> pathParts = readPath(path);
-	string currentFolder = "";
-	Node* currentNode = this->currentDir;
-	for(int i = 0; i < pathParts.size(); i++)
-	{
-		if (pathParts.at(i) == "..")
-		{
-			if (currentNode->getParent() != NULL)
-			{
-				currentNode = currentNode->getParent();
-			}
-		}
-		else
-		{
-			//for(int i = )
-			//if(currentNode->getAllChildren())
-		}
-	}
-    */
+    if(path->isFolder())
+    {
+        currentDir = path;
+    }
+    else
+    {
+        std::cout << "Cannot go into '" << path->getName() << "': Not a directory." << std::endl;
+    }
 }
-/*
+//Converts a stringstream to a vector of strings seperated by "/"
 vector<string> FileSystem::readPath(stringstream &path)
 {
 	string segment;
@@ -141,7 +132,106 @@ vector<string> FileSystem::readPath(stringstream &path)
 	}
 	return segList;
 }
-*/
+void FileSystem::format()
+{
+	delete root;
+	root = new Node();
+}
+void FileSystem::createImage(std::string realFile)
+{
+	ofstream filestream;
+	filestream.open(realFile);
+	writeDir(root, filestream);
+	filestream.close();
+}
+void FileSystem::writeDir(Node* currentNode, ofstream &filestream)
+{
+	string type = "";
+	string name = "";
+	string children = "";
+	string fileContents = "";
+
+	name = currentNode->getName();
+	children = std::to_string(currentNode->getNrOfChildren());
+	if(currentNode->isFolder())
+	{
+		type = "folder";
+		filestream << type << " " << name << " " << children << endl;
+	}
+	else
+	{
+		type = "file";
+		//TODO get data from filesystem instead
+		fileContents = "hellogais";
+		filestream << type << " " << name << " " << children << " " << fileContents << endl;
+	}
+	for(int i = 0; i < currentNode->getNrOfChildren(); i++)
+	{
+		writeDir(currentNode->getChildAt(i), filestream);
+	}
+
+}
+//Load an image of the filesystem
+void FileSystem::loadImage(std::string realFile)
+{
+	format();
+	vector<string> *strings = new vector<string>();
+	string str = " ";
+	ifstream fileStream = ifstream();
+
+	//Read each word from the file into a vector
+	fileStream.open(realFile);
+	while(fileStream >> str)
+	{
+		strings->push_back(str);
+	}
+	fileStream.close();
+
+	if(strings->size() > 0)
+	{
+		delete root;
+		root = readDir(strings);
+	}
+	else
+	{
+		cout << "Image file not found or empty." << endl;
+	}
+
+	delete strings;
+}
+Node* FileSystem::readDir(vector<string>* strings, Node* parent)
+{
+	Node* thisNode;
+	string type = "";
+	string name = "";
+	string children = "";
+	string fileContents = "";
+
+	type = strings->at(0);
+	strings->erase(strings->begin());
+	name = strings->at(0);
+	strings->erase(strings->begin());
+	children = strings->at(0);
+	strings->erase(strings->begin());
+	if(type == "folder")
+	{
+		//If this node is a folder continue reading it's children recursively
+		thisNode = new Node(name,-1,parent);
+		for(int i = 0; i < std::stoi(children); i++)
+		{
+			thisNode->createChild(readDir(strings,thisNode));
+		}
+	}
+	else
+	{
+		fileContents = strings->at(0);
+		strings->erase(strings->begin());
+		//TODO: place file content in a memory block and supply it's location in the node constructor.
+		thisNode = new Node(name,0,parent);
+	}
+	return thisNode;
+}
+//Returns the directory the path relates to
 Node* FileSystem::getPath(string path)
 {
     //Check if a path is added after command
@@ -149,22 +239,26 @@ Node* FileSystem::getPath(string path)
     {
         return currentDir;
     }
+
     string segment;
 	vector<string> segList;
+
     //Check if first char is root identifier
     if (path[0] == '/')
     {
         segList.push_back("/");
         path.erase(path.begin());
     }
+
     //Seperate string to find folder location
     stringstream paths(path);
     while(std::getline(paths, segment, '/'))
 	{
 		segList.push_back(segment);
-	}
+    }
 
     Node* folderNode = currentDir;
+
     //If / is first then go to root
     int i = 0;
     if (segList.at(0) == "/")
@@ -172,42 +266,65 @@ Node* FileSystem::getPath(string path)
         folderNode = root;
         i++;
     }
-    // Find the folder, if .. is found go to parrent of current folder, if not found then return NULL
+
+    // Find the folder, if .. is found go to parent of current folder, if not found then return NULL
     for (size_t k = i; k < segList.size(); k++)
     {
+		//Enter parent node
         if (segList.at(k) == "..")
         {
+			if(folderNode->getParent() == NULL)
+			{
+				std::cout << "Parent folder does not exist." << std::endl;
+				return NULL;
+			}
             folderNode = folderNode->getParent();
         }
+		//Enter child node
         else if (folderNode->getChild(segList.at(k)) != NULL && folderNode->getChild(segList.at(k))->isFolder())
         {
             folderNode = folderNode->getChild(segList.at(k));
-            //k = segList.size();
         }
+		//Node does not exist or is not a folder
         else
         {
-            folderNode = NULL;
-            k = segList.size();
+            return NULL;
         }
     }
     return folderNode;
 }
-/*
-void FileSystem::listDir()
+string FileSystem::getAbsolutePath()
 {
-    std::vector<string> v = this->currentDir->getAllChildrenAsString();
-    for (size_t i = 0; i < v.size(); i++)
-    {
-        std::cout << v.at(i) << std::endl;
-    }
+	Node* thisNode = currentDir;
+	std::stack<std::string> directories;
+	//Get the names of all parent folders
+	while(thisNode->getParent() != NULL)
+	{
+		directories.push(thisNode->getName());
+		thisNode = thisNode->getParent();
+	}
+
+	stringstream ss;
+	//If we are located in the root folder, return it's name
+	if(directories.empty())
+	{
+		return thisNode->getName();
+	}
+	//Put the names together with slashes between in reverse order
+	while(!directories.empty())
+	{
+		ss << "/" << directories.top();
+		directories.pop();
+	}
+	return ss.str();
 }
-*/
+//Lists all directory contents
 void FileSystem::ls(Node* folder)
 {
     if (folder != NULL)
     {
-        std::cout << "Listing directory" << std::endl;
-
+        std::cout << "Listing directory contents" << std::endl;
+		//Print all children
         std::vector<string> v = folder->getAllChildrenAsString();
         for (size_t i = 0; i < v.size(); i++)
         {

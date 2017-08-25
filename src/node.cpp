@@ -1,13 +1,18 @@
 #include "node.h"
 Node::Node(string name,int data, Node *parent)
 {
+	this->children = vector<Node*>();
     this->name = name;
     this->data = data;
     this->parent = parent;
 }
 Node::~Node()
 {
-
+	for(uint i = 0; i < children.size(); i++)
+	{
+		delete children[i];
+	}
+	children.clear();
 }
 string Node::getName()
 {
@@ -33,6 +38,10 @@ Node* Node::getChild(string childName)
     }
     return temp;
 }
+Node* Node::getChildAt(int index)
+{
+	return children.at(index);
+}
 int Node::getNrOfChildren()
 {
     return this->children.size();
@@ -57,7 +66,7 @@ vector<string> Node::getAllChildrenAsString()
 }
 string Node::asString()
 {
-    if (this->data == -1)
+    if (isFolder())
     {
         string folderName = "\033[32m" + this->name + "\033[0m";
         return folderName;

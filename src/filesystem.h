@@ -5,11 +5,13 @@
 #include "node.h"
 #include <sstream>
 #include <vector>
+#include <stack> 
+#include <fstream>
 
 class FileSystem
 {
 private:
-    MemBlockDevice mMemblockDevice;
+	MemBlockDevice mMemblockDevice;
     Node *root;
     Node *currentDir;
     bool isEmpty[250];
@@ -38,14 +40,19 @@ public:
     /* Function will move the current location to a specified location in the filesystem */
     void goToFolder(Node* path);
 
-	//vector<string> readPath(stringstream &path);
+	vector<string> readPath(stringstream &path);
     /* This function will get all the files and folders in the specified folder */
     // listDir(...);
     //void listDir();
 
     /* Add your own member-functions if needed */
+	void format();
+	void createImage(std::string realFile);
+	void writeDir(Node* currentNode, ofstream &filestream);
+	void loadImage(std::string realFile);
+	Node* readDir(vector<string> *strings, Node* parent = NULL);
     Node* getPath(string path);
+	string getAbsolutePath();
     void ls(Node* folder);
-
 };
 #endif

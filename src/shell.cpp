@@ -23,7 +23,7 @@ int main(void) {
 	std::string currentDir = "/";    // current directory, used for output
     FileSystem filesystem;
     bool bRun = true;
-
+	filesystem.loadImage("test.txt");
     do {
         std::cout << user << ":" << currentDir << "$ ";
         getline(std::cin, userCommand);
@@ -32,14 +32,14 @@ int main(void) {
         if (nrOfCommands > 0) {
 
             int cIndex = findCommand(commandArr[0]);
-            switch(cIndex) {
-
+            switch(cIndex)
+			{
             case 0: // quit
                 bRun = false;
                 std::cout << "Exiting\n";
                 break;
             case 1: // format
-                // Call fileSystem.format()
+                filesystem.format();
                 break;
             case 2: // ls
             {
@@ -83,8 +83,18 @@ int main(void) {
             case 4: // cat
                 break;
             case 5: // createImage
+			{
+				std::string fileName = userCommand;
+				fileName.erase(0,12);
+				filesystem.createImage(fileName);
+			}
                 break;
             case 6: // restoreImage
+			{
+				std::string fileName = userCommand;
+				fileName.erase(0,13);
+				filesystem.loadImage(fileName);
+			}
                 break;
             case 7: // rm
             {
@@ -104,13 +114,14 @@ int main(void) {
                 break;
             case 11: // mkdir
             {
-                std::string folderName = userCommand;
-                folderName.erase(0,6);
+                std::string folderName = userCommand.erase(0,6);
                 filesystem.createFolder(folderName);
+				std::cout << "Directory created." << std::endl;
                 break;
             }
             case 12: // cd
             {
+				//Moves to specified folder
                 userCommand = userCommand.erase(0,3);
                 if (userCommand.length() > 0)
                 {
@@ -120,7 +131,7 @@ int main(void) {
                     }
                     else
                     {
-                        std::cout << "Folder not found." << std::endl;
+                        std::cout << "Item does not exist or is not a directory" << std::endl;
                     }
                 }
                 else
@@ -131,6 +142,7 @@ int main(void) {
             }
                 break;
             case 13: // pwd
+				cout << filesystem.getAbsolutePath() << endl;
                 break;
             case 14: // help
                 std::cout << help() << std::endl;
@@ -140,7 +152,7 @@ int main(void) {
             }
         }
     } while (bRun == true);
-
+	filesystem.createImage("test.txt");
     return 0;
 }
 
