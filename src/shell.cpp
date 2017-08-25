@@ -83,8 +83,18 @@ int main(void) {
             case 4: // cat
                 break;
             case 5: // createImage
+			{
+				std::string fileName = userCommand;
+				fileName.erase(0,12);
+				filesystem.createImage(fileName);
+			}
                 break;
             case 6: // restoreImage
+			{
+				std::string fileName = userCommand;
+				fileName.erase(0,13);
+				filesystem.loadImage(fileName);
+			}
                 break;
             case 7: // rm
             {

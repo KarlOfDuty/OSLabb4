@@ -186,8 +186,16 @@ void FileSystem::loadImage(std::string realFile)
 	}
 	fileStream.close();
 
-	delete root;
-	root = readDir(strings);
+	if(strings->size() > 0)
+	{
+		delete root;
+		root = readDir(strings);
+	}
+	else
+	{
+		cout << "Image file not found or empty." << endl;
+	}
+
 	delete strings;
 }
 Node* FileSystem::readDir(vector<string>* strings, Node* parent)
