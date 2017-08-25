@@ -2,3 +2,7 @@
 bin/
 
 \.tags
+
+\.tags1
+
+test\.txt

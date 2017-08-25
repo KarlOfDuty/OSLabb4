@@ -2,26 +2,26 @@
 #include <sstream>
 FileSystem::FileSystem()
 {
-    //mMemblockDevice = MemblockDevice();
+	//mMemblockDevice = MemblockDevice();
     root = new Node();
     currentDir = root;
     for (size_t i = 0; i < 250; i++)
     {
         isEmpty[i] = true;
     }
-    Node *temp = new Node("folder1",-1,root);
-    temp->createChild(new Node("folder2",-1,temp));
-    root->createChild(temp);
-    root->createChild(new Node("hejsan",-1,root));
-    root->createChild(new Node("hejsan2",-1,root));
-    root->createChild(new Node("hejsan3",-1,root));
-    root->createChild(new Node("hejsan4",-1,root));
-    root->createChild(new Node("file", 10, root));
+    // Node *temp = new Node("folder1",-1,root);
+    // temp->createChild(new Node("folder2",-1,temp));
+    // root->createChild(temp);
+    // root->createChild(new Node("hejsan",-1,root));
+    // root->createChild(new Node("hejsan2",-1,root));
+    // root->createChild(new Node("hejsan3",-1,root));
+    // root->createChild(new Node("hejsan4",-1,root));
+    // root->createChild(new Node("file", 10, root));
 }
 
 FileSystem::~FileSystem()
 {
-
+	delete root;
 }
 //Creates a new file
 void FileSystem::createFile(string name, Node* path)
@@ -132,6 +132,96 @@ vector<string> FileSystem::readPath(stringstream &path)
 	}
 	return segList;
 }
+void FileSystem::format()
+{
+
+}
+void FileSystem::createImage(std::string realFile)
+{
+	ofstream filestream;
+	filestream.open(realFile);
+	writeDir(root, filestream);
+	filestream.close();
+}
+void FileSystem::writeDir(Node* currentNode, ofstream &filestream)
+{
+	string type = "";
+	string name = "";
+	string children = "";
+	string fileContents = "";
+
+	name = currentNode->getName();
+	children = std::to_string(currentNode->getNrOfChildren());
+	if(currentNode->isFolder())
+	{
+		type = "folder";
+		filestream << type << " " << name << " " << children << endl;
+	}
+	else
+	{
+		type = "file";
+		//TODO get data from filesystem instead
+		fileContents = "hellogais";
+		filestream << type << " " << name << " " << children << " " << fileContents << endl;
+	}
+	for(int i = 0; i < currentNode->getNrOfChildren(); i++)
+	{
+		writeDir(currentNode->getChildAt(i), filestream);
+	}
+
+}
+//Load an image of the filesystem
+void FileSystem::loadImage(std::string realFile)
+{
+	format();
+	vector<string> *strings = new vector<string>();
+	string str = " ";
+	ifstream fileStream = ifstream();
+
+	//Read each word from the file into a vector
+	fileStream.open(realFile);
+	while(fileStream >> str)
+	{
+		strings->push_back(str);
+	}
+	fileStream.close();
+
+	delete root;
+	root = readDir(strings);
+	delete strings;
+}
+Node* FileSystem::readDir(vector<string>* strings, Node* parent)
+{
+	Node* thisNode;
+	string type = "";
+	string name = "";
+	string children = "";
+	string fileContents = "";
+
+	type = strings->at(0);
+	strings->erase(strings->begin());
+	name = strings->at(0);
+	strings->erase(strings->begin());
+	children = strings->at(0);
+	strings->erase(strings->begin());
+	if(type == "folder")
+	{
+		//If this node is a folder continue reading it's children recursively
+		thisNode = new Node(name,-1,parent);
+		for(int i = 0; i < std::stoi(children); i++)
+		{
+			thisNode->createChild(readDir(strings,thisNode));
+		}
+	}
+	else
+	{
+		fileContents = strings->at(0);
+		strings->erase(strings->begin());
+		//TODO: place file content in a memory block and supply it's location in the node constructor.
+		thisNode = new Node(name,0,parent);
+	}
+	return thisNode;
+}
 //Returns the directory the path relates to
 Node* FileSystem::getPath(string path)
 {
@@ -154,8 +244,8 @@ Node* FileSystem::getPath(string path)
     //Seperate string to find folder location
     stringstream paths(path);
     while(std::getline(paths, segment, '/'))
-	  {
-		    segList.push_back(segment);
+	{
+		segList.push_back(segment);
     }
 
     Node* folderNode = currentDir;

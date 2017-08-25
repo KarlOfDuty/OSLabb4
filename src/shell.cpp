@@ -23,7 +23,7 @@ int main(void) {
 	std::string currentDir = "/";    // current directory, used for output
     FileSystem filesystem;
     bool bRun = true;
-
+	filesystem.loadImage("test.txt");
     do {
         std::cout << user << ":" << currentDir << "$ ";
         getline(std::cin, userCommand);
@@ -32,8 +32,8 @@ int main(void) {
         if (nrOfCommands > 0) {
 
             int cIndex = findCommand(commandArr[0]);
-            switch(cIndex) {
-
+            switch(cIndex)
+			{
             case 0: // quit
                 bRun = false;
                 std::cout << "Exiting\n";
@@ -141,7 +141,7 @@ int main(void) {
             }
         }
     } while (bRun == true);
-
+	filesystem.createImage("test.txt");
     return 0;
 }
 

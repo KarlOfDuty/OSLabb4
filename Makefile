@@ -20,11 +20,11 @@ bin/%.o: src/%.cpp
 	g++ $(CFLAGS) -c $< -o $@
 
 # ---- Test ---------------------------
-bin/blockTest: bin/block.o test/blockTest.cpp
-	g++ $(CFLAGS) $(TESTFLAG) $^ -o $@
-
-bin/memBlockTest: bin/memblockdevice.o test/memBlockTest.cpp bin/blockdevice.o bin/block.o
-	g++ $(CFLAGS) $(TESTFLAG) $^ -o $@
+# bin/blockTest: bin/block.o test/blockTest.cpp
+# 	g++ $(CFLAGS) $(TESTFLAG) $^ -o $@
+#
+# bin/memBlockTest: bin/memblockdevice.o test/memBlockTest.cpp bin/blockdevice.o bin/block.o
+# 	g++ $(CFLAGS) $(TESTFLAG) $^ -o $@
 
 clean:
 	rm -rf bin

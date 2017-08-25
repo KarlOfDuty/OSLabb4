@@ -5,11 +5,12 @@
 #include "node.h"
 #include <sstream>
 #include <vector>
+#include <fstream>
 
 class FileSystem
 {
 private:
-    MemBlockDevice mMemblockDevice;
+	MemBlockDevice mMemblockDevice;
     Node *root;
     Node *currentDir;
     bool isEmpty[250];
@@ -44,8 +45,12 @@ public:
     //void listDir();
 
     /* Add your own member-functions if needed */
+	void format();
+	void createImage(std::string realFile);
+	void writeDir(Node* currentNode, ofstream &filestream);
+	void loadImage(std::string realFile);
+	Node* readDir(vector<string> *strings, Node* parent = NULL);
     Node* getPath(string path);
     void ls(Node* folder);
-
 };
 #endif
