@@ -134,7 +134,8 @@ vector<string> FileSystem::readPath(stringstream &path)
 }
 void FileSystem::format()
 {
-
+	delete root;
+	root = new Node();
 }
 void FileSystem::createImage(std::string realFile)
 {

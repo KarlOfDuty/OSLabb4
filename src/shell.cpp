@@ -39,7 +39,7 @@ int main(void) {
                 std::cout << "Exiting\n";
                 break;
             case 1: // format
-                // Call fileSystem.format()
+                filesystem.format();
                 break;
             case 2: // ls
             {
