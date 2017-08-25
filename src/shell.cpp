@@ -142,6 +142,7 @@ int main(void) {
             }
                 break;
             case 13: // pwd
+				cout << filesystem.getAbsolutePath() << endl;
                 break;
             case 14: // help
                 std::cout << help() << std::endl;

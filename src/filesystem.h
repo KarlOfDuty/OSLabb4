@@ -5,6 +5,7 @@
 #include "node.h"
 #include <sstream>
 #include <vector>
+#include <stack> 
 #include <fstream>
 
 class FileSystem
@@ -51,6 +52,7 @@ public:
 	void loadImage(std::string realFile);
 	Node* readDir(vector<string> *strings, Node* parent = NULL);
     Node* getPath(string path);
+	string getAbsolutePath();
     void ls(Node* folder);
 };
 #endif

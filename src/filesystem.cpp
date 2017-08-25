@@ -293,6 +293,31 @@ Node* FileSystem::getPath(string path)
     }
     return folderNode;
 }
+string FileSystem::getAbsolutePath()
+{
+	Node* thisNode = currentDir;
+	std::stack<std::string> directories;
+	//Get the names of all parent folders
+	while(thisNode->getParent() != NULL)
+	{
+		directories.push(thisNode->getName());
+		thisNode = thisNode->getParent();
+	}
+
+	stringstream ss;
+	//If we are located in the root folder, return it's name
+	if(directories.empty())
+	{
+		return thisNode->getName();
+	}
+	//Put the names together with slashes between in reverse order
+	while(!directories.empty())
+	{
+		ss << "/" << directories.top();
+		directories.pop();
+	}
+	return ss.str();
+}
 //Lists all directory contents
 void FileSystem::ls(Node* folder)
 {
