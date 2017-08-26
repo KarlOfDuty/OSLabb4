@@ -108,9 +108,9 @@ int main(void) {
                 break;
             case 8: // cp
                 break;
-            case 9: // append
+            case 9: // append - not needed
                 break;
-            case 10: // mv
+            case 10: // mv - not needed
                 break;
             case 11: // mkdir
             {

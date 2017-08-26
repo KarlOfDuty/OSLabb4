@@ -5,13 +5,13 @@
 #include "node.h"
 #include <sstream>
 #include <vector>
-#include <stack> 
+#include <stack>
 #include <fstream>
 
 class FileSystem
 {
 private:
-	MemBlockDevice mMemblockDevice;
+	MemBlockDevice mMemBlockDevice;
     Node *root;
     Node *currentDir;
     bool isEmpty[250];

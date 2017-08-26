@@ -10,7 +10,7 @@ Block::Block(int size) {
         this->nrOfElements = 512;
 
     this->block = new char[this->nrOfElements];
-
+	this->empty = true;
     // Sets everything to 0
     this->reset();
 }
@@ -20,6 +20,8 @@ Block::Block(const Block &other) {
     this->block = new char[this->nrOfElements];
     for (int i = 0; i < this->nrOfElements; ++i)
         this->block[i] = other.block[i];
+
+	this->empty = other.empty;
 }
 
 Block::~Block() {
@@ -47,6 +49,7 @@ char Block::operator[](int index) const {
 void Block::reset(char c) {
     for (int i = 0; i < this->nrOfElements; ++i)
         this->block[i] = c;
+		empty = true;
 }
 
 int Block::size() const {
@@ -57,6 +60,11 @@ Block Block::readBlock() const {
     return Block(*this);
 }
 
+bool Block::isEmpty() const
+{
+	return empty;
+}
+
 int Block::writeBlock(const std::string &strBlock) {
     int output = -2;    // Assume out of range
     if (strBlock.size() == (unsigned long)this->nrOfElements) {
@@ -64,6 +72,7 @@ int Block::writeBlock(const std::string &strBlock) {
             this->block[i] = strBlock[i];
         }
         output = 1;
+		empty = false;
     }
 
     return output;
@@ -76,6 +85,7 @@ int Block::writeBlock(const std::vector<char> &vec) {
            this->block[i] = vec[i];
         }
         output = 1;
+		empty = false;
     }
 //    else {
 //        throw std::out_of_range("vector and block not the same dimension");
@@ -87,6 +97,7 @@ void Block::writeBlock(const char cArr[]) {
     for (int i = 0; i < this->nrOfElements; ++i) {
         this->block[i] = cArr[i];
     }
+	empty = false;
 }
 
 std::string Block::toString() const {
@@ -96,8 +107,3 @@ std::string Block::toString() const {
         output += this->block[i];
     return output;
 }
-
-
-
-
-

@@ -2,7 +2,7 @@
 #include <sstream>
 FileSystem::FileSystem()
 {
-	//mMemblockDevice = MemblockDevice();
+	MemBlockDevice mMemBlockDevice = MemBlockDevice();
     root = new Node();
     currentDir = root;
     for (size_t i = 0; i < 250; i++)
@@ -67,8 +67,8 @@ bool FileSystem::removeFile(string name)
             {
                 fileFound = true;
                 Node *temp = allChildren.at(i);
-                this->isEmpty[temp->getData()] = true;
-                std::cout << "temp->getdata() = " << temp->getData() << std::endl;
+                this->isEmpty[temp->getDataLocation()] = true;
+                std::cout << "temp->getdata() = " << temp->getDataLocation() << std::endl;
                 //std::cout << "FOUND : " << allChildren.at(i)->getName() << std::endl;
                 currentDir->removeChildAt(i);
                 delete temp;
