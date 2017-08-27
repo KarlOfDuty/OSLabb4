@@ -36,7 +36,7 @@ public:
     void removeFile(string path);
 
     /* Removes a folder in the filesystem */
-    bool removeFolder(string name);
+    //bool removeFolder(string name);
 
     /* Function will move the current location to a specified location in the filesystem */
     void goToFolder(Node* path);

@@ -69,10 +69,35 @@ int FileSystem::createFileData(std::string data)
 	return -1;
 }
 //Creates a new folder
-void FileSystem::createFolder(string name)
+void FileSystem::createFolder(string path)
 {
-    Node *folder = new Node(name,-1,currentDir);
-    currentDir->createChild(folder);
+	//Seperates the
+	string name = "";
+	name = path;
+	int lastSlash = name.find_last_of('/');
+	if(lastSlash >= 0)
+	{
+		name.erase(0,lastSlash + 1);
+		path.erase(path.begin() + lastSlash,path.end());
+	}
+	else
+	{
+		path = "";
+	}
+	Node* parentDir = getPath(path);
+	if(parentDir != NULL)
+	{
+		if(parentDir->getChild(name) == NULL)
+		{
+			Node *folder = new Node(name,-1,parentDir);
+	    	parentDir->createChild(folder);
+			std::cout << "Directory created." << std::endl;
+		}
+		else
+		{
+			std::cout << "Directory already exists." << std::endl;
+		}
+	}
 }
 //Removes a file
 void FileSystem::removeFile(string path)
@@ -82,6 +107,7 @@ void FileSystem::removeFile(string path)
 	{
 		if (!thisFile->isFolder())
 	    {
+			//Delete data and file
 			memBlockDevice[thisFile->getDataLocation()].reset();
 			thisFile->getParent()->removeChild(thisFile->getName());
 			delete thisFile;
@@ -97,32 +123,32 @@ void FileSystem::removeFile(string path)
 	}
 }
 //Removes a folder if empty
-bool FileSystem::removeFolder(string name)
-{
-    bool folderFound = false;
-    vector<Node*> allChildren = this->currentDir->getAllChildren();
-    for (size_t i = 0; i < allChildren.size(); i++)
-    {
-        if (allChildren.at(i)->getName() == name)
-        {
-            if (allChildren.at(i)->isFolder())
-            {
-                if(allChildren.at(i)->getNrOfChildren() == 0)
-                {
-                    folderFound = true;
-                    Node *temp = allChildren.at(i);
-                    currentDir->removeChildAt(i);
-                    delete temp;
-                }
-            }
-            else
-            {
-                std::cout << "Cannot remove '" << name << "': Not a directory." << std::endl;
-            }
-        }
-    }
-    return folderFound;
-}
+// bool FileSystem::removeFolder(string name)
+// {
+//     bool folderFound = false;
+//     vector<Node*> allChildren = this->currentDir->getAllChildren();
+//     for (size_t i = 0; i < allChildren.size(); i++)
+//     {
+//         if (allChildren.at(i)->getName() == name)
+//         {
+//             if (allChildren.at(i)->isFolder())
+//             {
+//                 if(allChildren.at(i)->getNrOfChildren() == 0)
+//                 {
+//                     folderFound = true;
+//                     Node *temp = allChildren.at(i);
+//                     currentDir->removeChildAt(i);
+//                     delete temp;
+//                 }
+//             }
+//             else
+//             {
+//                 std::cout << "Cannot remove '" << name << "': Not a directory." << std::endl;
+//             }
+//         }
+//     }
+//     return folderFound;
+// }
 //Makes the current folder the node provided
 void FileSystem::goToFolder(Node* path)
 {

@@ -164,7 +164,6 @@ int main(void) {
             {
                 std::string folderName = userCommand.erase(0,6);
                 filesystem.createFolder(folderName);
-				std::cout << "Directory created." << std::endl;
                 break;
             }
             case 12: // cd
