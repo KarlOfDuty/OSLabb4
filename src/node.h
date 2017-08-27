@@ -10,15 +10,15 @@ using namespace std;
 class Node
 {
 private:
-    int data;
+    int dataLocation;
     string name;
     Node *parent;
     vector<Node*> children;
 
   public:
-    Node(string name = "/", int data = -1, Node *parent = NULL);
+    Node(string name = "/", int dataLocation = -1, Node *parent = NULL);
     string getName();
-    int getData();
+    int getDataLocation();
     int getNrOfChildren();
     void createChild(Node *child);
     Node* getParent();
@@ -29,6 +29,7 @@ private:
     string asString();
     bool isFolder();
     void removeChildAt(int location);
+	void removeChild(std::string childName);
     ~Node();
 };
 

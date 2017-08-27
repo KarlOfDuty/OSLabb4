@@ -1,9 +1,9 @@
 #include "node.h"
-Node::Node(string name,int data, Node *parent)
+Node::Node(string name,int dataLocation, Node *parent)
 {
 	this->children = vector<Node*>();
     this->name = name;
-    this->data = data;
+    this->dataLocation = dataLocation;
     this->parent = parent;
 }
 Node::~Node()
@@ -18,9 +18,9 @@ string Node::getName()
 {
     return this->name;
 }
-int Node::getData()
+int Node::getDataLocation()
 {
-    return this->data;
+    return this->dataLocation;
 }
 Node* Node::getParent()
 {
@@ -76,9 +76,20 @@ string Node::asString()
 }
 bool Node::isFolder()
 {
-    return this->data == -1;
+    return this->dataLocation == -1;
 }
 void Node::removeChildAt(int location)
 {
     children.erase(children.begin()+location);
+}
+void Node::removeChild(std::string childName)
+{
+	for(uint i = 0; i < children.size(); i++)
+	{
+		if(children[i]->getName() == childName)
+		{
+			children.erase(children.begin()+i);
+			return;
+		}
+	}
 }

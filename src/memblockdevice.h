@@ -17,6 +17,8 @@ public:
     /* Returns amount of free blocks */
     int spaceLeft() const;
 
+	int getEmptyBlockIndex() const;
+
     /* Writes a block */
     int writeBlock(int blockNr, const std::vector<char> &vec);
     int writeBlock(int blockNr, const std::string &strBlock);

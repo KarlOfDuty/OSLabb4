@@ -10,7 +10,7 @@ class Block
 private:
     char *block;
     int nrOfElements;
-
+	bool empty;
 public:
     /* Constructor */
     Block(int nrOfElements = 512);    // overloaded (default) constructor
@@ -32,6 +32,7 @@ public:
     void reset(char c = 0);  // Sets every element in char-array to 0
     int size() const;   // returns the size
     Block readBlock() const;    // Returns a copy of block
+	bool isEmpty() const;
 
     /* Write a block */
     int writeBlock(const std::string &strBlock);

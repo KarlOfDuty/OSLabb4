@@ -23,7 +23,7 @@ int main(void) {
 	std::string currentDir = "/";    // current directory, used for output
     FileSystem filesystem;
     bool bRun = true;
-	filesystem.loadImage("test.txt");
+	filesystem.loadImage("filesystem.image");
     do {
         std::cout << user << ":" << currentDir << "$ ";
         getline(std::cin, userCommand);
@@ -40,6 +40,7 @@ int main(void) {
                 break;
             case 1: // format
                 filesystem.format();
+				std::cout << "File system formatted" << std::endl;
                 break;
             case 2: // ls
             {
@@ -62,25 +63,54 @@ int main(void) {
                 }
                 if (fileName.length() > 0)
                 {
+					std::string fileContents = "";
+					std::cout << "Enter file contents: ";
+					getline(std::cin, fileContents);
+					//Replace spaces as our image reading does not support them
+					for(uint i = 0; i < fileContents.length(); i++)
+					{
+						if(fileContents[i] == ' ')
+						{
+							fileContents[i] = '_';
+						}
+					}
                     if (lastSlash != -1)
                     {
                         fileName.erase(0,lastSlash+1);
                         userCommand.erase(lastSlash+1);
-                        filesystem.createFile(fileName,filesystem.getPath(userCommand));
+                        if(filesystem.createFile(fileName,fileContents,filesystem.getPath(userCommand)))
+						{
+							std::cout << "File created." << std::endl;
+						}
+						else
+						{
+							std::cout << "File could not be created: No space left." << endl;
+						}
                     }
                     else
                     {
-                        filesystem.createFile(fileName);
+                        if(filesystem.createFile(fileName,fileContents))
+						{
+							std::cout << "File created." << std::endl;
+						}
+						else
+						{
+							std::cout << "File could not be created: No space left." << endl;
+						}
                     }
                 }
                 else
                 {
                     std::cout << "Must specify file name." << std::endl;
                 }
-                break;
             }
                 break;
             case 4: // cat
+			{
+				std::string path = userCommand;
+				path.erase(0,4);
+				filesystem.printData(path);
+			}
                 break;
             case 5: // createImage
 			{
@@ -100,23 +130,41 @@ int main(void) {
             {
                 std::string fileName = userCommand;
                 fileName.erase(0,3);
-                if (!filesystem.removeFile(fileName))
-                {
-                    std::cout << "rm: " << fileName << ": Could not find file." << std::endl;
-                }
+				filesystem.removeFile(fileName);
             }
                 break;
             case 8: // cp
+			{
+				std::string fileNames = userCommand;
+				fileNames.erase(0,3);
+				std::stringstream ss = std::stringstream();
+
+				ss << fileNames;
+				string origin = "";
+				string destination = "";
+				getline(ss, origin, ' ');
+				getline(ss, destination, ' ');
+
+				Node* originalNode = filesystem.getPath(origin);
+				Node* destinationDir = filesystem.getPath(destination);
+				if(originalNode != NULL && destinationDir != NULL)
+				{
+					filesystem.copy(originalNode, destinationDir);
+				}
+				else
+				{
+					std::cout << "Origin/destination not found." << std::endl;
+				}
+			}
                 break;
-            case 9: // append
+            case 9: // append - not needed
                 break;
-            case 10: // mv
+            case 10: // mv - not needed
                 break;
             case 11: // mkdir
             {
                 std::string folderName = userCommand.erase(0,6);
                 filesystem.createFolder(folderName);
-				std::cout << "Directory created." << std::endl;
                 break;
             }
             case 12: // cd
@@ -152,7 +200,7 @@ int main(void) {
             }
         }
     } while (bRun == true);
-	filesystem.createImage("test.txt");
+	filesystem.createImage("filesystem.image");
     return 0;
 }
 

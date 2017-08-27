@@ -1,7 +1,8 @@
 #include "memblockdevice.h"
 #include <stdexcept>
 
-MemBlockDevice::MemBlockDevice(int nrOfBlocks): BlockDevice(nrOfBlocks) {
+MemBlockDevice::MemBlockDevice(int nrOfBlocks): BlockDevice(nrOfBlocks)
+{
 
 }
 
@@ -34,9 +35,32 @@ Block& MemBlockDevice::operator[](int index) const {
     }
 }
 
-int MemBlockDevice::spaceLeft() const {
-    /* Not yet implemented */
-    return 0;
+int MemBlockDevice::spaceLeft() const
+{
+	int blocksLeft = 0;
+	for(int i = 0; i < nrOfBlocks; i++)
+	{
+		if(memBlocks[i].isEmpty())
+		{
+			blocksLeft++;
+		}
+	}
+    return blocksLeft;
+}
+
+int MemBlockDevice::getEmptyBlockIndex() const
+{
+	if(spaceLeft() > 0)
+	{
+		for(int i = 0; i < nrOfBlocks; i++)
+		{
+			if(memBlocks[i].isEmpty())
+			{
+				return i;
+			}
+		}
+	}
+	return -1;
 }
 
 int MemBlockDevice::writeBlock(int blockNr, const std::vector<char> &vec) {
