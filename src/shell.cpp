@@ -128,10 +128,7 @@ int main(void) {
             {
                 std::string fileName = userCommand;
                 fileName.erase(0,3);
-                if (!filesystem.removeFile(fileName))
-                {
-                    std::cout << "rm: " << fileName << ": Could not find file." << std::endl;
-                }
+				filesystem.removeFile(fileName);
             }
                 break;
             case 8: // cp

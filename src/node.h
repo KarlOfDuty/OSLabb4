@@ -29,6 +29,7 @@ private:
     string asString();
     bool isFolder();
     void removeChildAt(int location);
+	void removeChild(std::string childName);
     ~Node();
 };
 

@@ -75,30 +75,26 @@ void FileSystem::createFolder(string name)
     currentDir->createChild(folder);
 }
 //Removes a file
-bool FileSystem::removeFile(string name)
+void FileSystem::removeFile(string path)
 {
-    bool fileFound = false;
-    vector<Node*> allChildren = this->currentDir->getAllChildren();
-    for (size_t i = 0; i < allChildren.size(); i++)
-    {
-        if (allChildren.at(i)->getName() == name)
-        {
-            if (!allChildren.at(i)->isFolder())
-            {
-                fileFound = true;
-                Node *temp = allChildren.at(i);
-                std::cout << "temp->getdata() = " << temp->getDataLocation() << std::endl;
-                //std::cout << "FOUND : " << allChildren.at(i)->getName() << std::endl;
-                currentDir->removeChildAt(i);
-                delete temp;
-            }
-            else
-            {
-                std::cout << "Cannot remove '" << name << "': Is a directory." << std::endl;
-            }
-        }
-    }
-    return fileFound;
+	Node* thisFile = getPath(path);
+	if(thisFile != NULL)
+	{
+		if (!thisFile->isFolder())
+	    {
+			memBlockDevice[thisFile->getDataLocation()].reset();
+			thisFile->getParent()->removeChild(thisFile->getName());
+			delete thisFile;
+	    }
+		else
+		{
+			std::cout << "Cannot remove '" << path << "': Is a directory." << std::endl;
+		}
+	}
+	else
+	{
+		std::cout << "Cannot remove '" << path << "': Does not exist." << std::endl;
+	}
 }
 //Removes a folder if empty
 bool FileSystem::removeFolder(string name)

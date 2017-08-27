@@ -33,7 +33,7 @@ public:
     void createFolder(string name);
 
     /* Removes a file in the filesystem */
-    bool removeFile(string name);
+    void removeFile(string path);
 
     /* Removes a folder in the filesystem */
     bool removeFolder(string name);

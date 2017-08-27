@@ -82,3 +82,14 @@ void Node::removeChildAt(int location)
 {
     children.erase(children.begin()+location);
 }
+void Node::removeChild(std::string childName)
+{
+	for(uint i = 0; i < children.size(); i++)
+	{
+		if(children[i]->getName() == childName)
+		{
+			children.erase(children.begin()+i);
+			return;
+		}
+	}
+}
