@@ -357,6 +357,35 @@ string FileSystem::getAbsolutePath()
 	}
 	return ss.str();
 }
+void FileSystem::copy(Node* originalNode, Node* destinationDir)
+{
+	if(destinationDir->isFolder())
+	{
+		if(originalNode->isFolder())
+		{
+			//Copy folder and contents
+			Node* newNode = new Node(originalNode->getName(), -1, destinationDir);
+			destinationDir->createChild(newNode);
+			//Copy all children of this directory to the new one
+			for(int i = 0; i < originalNode->getNrOfChildren(); i++)
+			{
+				copy(originalNode->getChildAt(i), newNode);
+			}
+		}
+		else
+		{
+			//Copy file and contents
+			int dataLocation = memBlockDevice.getEmptyBlockIndex();
+			memBlockDevice[dataLocation] = memBlockDevice[originalNode->getDataLocation()];
+			Node* newNode = new Node(originalNode->getName(), dataLocation, destinationDir);
+			destinationDir->createChild(newNode);
+		}
+	}
+	else
+	{
+		std::cout << "Destination is not a directory." << std::endl;
+	}
+}
 //Lists all directory contents
 void FileSystem::ls(Node* folder)
 {

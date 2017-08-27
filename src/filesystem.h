@@ -50,6 +50,7 @@ public:
 	void printData(std::string path);
     Node* getPath(string path);
 	string getAbsolutePath();
+	void copy(Node* originalNode, Node* destinationDir);
     void ls(Node* folder);
 };
 #endif

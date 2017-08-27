@@ -65,6 +65,7 @@ int main(void) {
 					std::string fileContents = "";
 					std::cout << "Enter file contents: ";
 					getline(std::cin, fileContents);
+					//Replace spaces as our image reading does not support them
 					for(uint i = 0; i < fileContents.length(); i++)
 					{
 						if(fileContents[i] == ' ')
@@ -132,6 +133,28 @@ int main(void) {
             }
                 break;
             case 8: // cp
+			{
+				std::string fileNames = userCommand;
+				fileNames.erase(0,3);
+				std::stringstream ss = std::stringstream();
+
+				ss << fileNames;
+				string origin = "";
+				string destination = "";
+				getline(ss, origin, ' ');
+				getline(ss, destination, ' ');
+
+				Node* originalNode = filesystem.getPath(origin);
+				Node* destinationDir = filesystem.getPath(destination);
+				if(originalNode != NULL && destinationDir != NULL)
+				{
+					filesystem.copy(originalNode, destinationDir);
+				}
+				else
+				{
+					std::cout << "Origin/destination not found." << std::endl;
+				}
+			}
                 break;
             case 9: // append - not needed
                 break;
