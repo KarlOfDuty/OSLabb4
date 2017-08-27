@@ -23,7 +23,7 @@ int main(void) {
 	std::string currentDir = "/";    // current directory, used for output
     FileSystem filesystem;
     bool bRun = true;
-	filesystem.loadImage("test.txt");
+	filesystem.loadImage("filesystem.image");
     do {
         std::cout << user << ":" << currentDir << "$ ";
         getline(std::cin, userCommand);
@@ -40,6 +40,7 @@ int main(void) {
                 break;
             case 1: // format
                 filesystem.format();
+				std::cout << "File system formatted" << std::endl;
                 break;
             case 2: // ls
             {
@@ -199,7 +200,7 @@ int main(void) {
             }
         }
     } while (bRun == true);
-	filesystem.createImage("test.txt");
+	filesystem.createImage("filesystem.image");
     return 0;
 }
 
