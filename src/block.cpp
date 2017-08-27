@@ -34,6 +34,7 @@ Block &Block::operator =(const Block &other) {
     this->block = new char[this->nrOfElements];
     for (int i = 0; i < this->nrOfElements; ++i)
         this->block[i] = other.block[i];
+	this->empty = other.empty;
     return *this;
 }
 
@@ -49,7 +50,7 @@ char Block::operator[](int index) const {
 void Block::reset(char c) {
     for (int i = 0; i < this->nrOfElements; ++i)
         this->block[i] = c;
-		empty = true;
+		this->empty = true;
 }
 
 int Block::size() const {
@@ -72,7 +73,7 @@ int Block::writeBlock(const std::string &strBlock) {
             this->block[i] = strBlock[i];
         }
         output = 1;
-		empty = false;
+		this->empty = false;
     }
 
     return output;
@@ -85,7 +86,7 @@ int Block::writeBlock(const std::vector<char> &vec) {
            this->block[i] = vec[i];
         }
         output = 1;
-		empty = false;
+		this->empty = false;
     }
 //    else {
 //        throw std::out_of_range("vector and block not the same dimension");
@@ -97,7 +98,7 @@ void Block::writeBlock(const char cArr[]) {
     for (int i = 0; i < this->nrOfElements; ++i) {
         this->block[i] = cArr[i];
     }
-	empty = false;
+	this->empty = false;
 }
 
 std::string Block::toString() const {

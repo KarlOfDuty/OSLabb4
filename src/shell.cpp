@@ -62,25 +62,53 @@ int main(void) {
                 }
                 if (fileName.length() > 0)
                 {
+					std::string fileContents = "";
+					std::cout << "Enter file contents: ";
+					getline(std::cin, fileContents);
+					for(uint i = 0; i < fileContents.length(); i++)
+					{
+						if(fileContents[i] == ' ')
+						{
+							fileContents[i] = '_';
+						}
+					}
                     if (lastSlash != -1)
                     {
                         fileName.erase(0,lastSlash+1);
                         userCommand.erase(lastSlash+1);
-                        filesystem.createFile(fileName,filesystem.getPath(userCommand));
+                        if(filesystem.createFile(fileName,fileContents,filesystem.getPath(userCommand)))
+						{
+							std::cout << "File created." << std::endl;
+						}
+						else
+						{
+							std::cout << "File could not be created: No space left." << endl;
+						}
                     }
                     else
                     {
-                        filesystem.createFile(fileName);
+                        if(filesystem.createFile(fileName,fileContents))
+						{
+							std::cout << "File created." << std::endl;
+						}
+						else
+						{
+							std::cout << "File could not be created: No space left." << endl;
+						}
                     }
                 }
                 else
                 {
                     std::cout << "Must specify file name." << std::endl;
                 }
-                break;
             }
                 break;
             case 4: // cat
+			{
+				std::string path = userCommand;
+				path.erase(0,4);
+				filesystem.printData(path);
+			}
                 break;
             case 5: // createImage
 			{

@@ -11,10 +11,9 @@
 class FileSystem
 {
 private:
-	MemBlockDevice mMemBlockDevice;
+	MemBlockDevice memBlockDevice;
     Node *root;
     Node *currentDir;
-    bool isEmpty[250];
     // Here you can add your own data structures
 public:
     FileSystem();
@@ -26,7 +25,9 @@ public:
      */
 
     /* This function creates a file in the filesystem */
-    void createFile(string name, Node* path = NULL);
+    bool createFile(string name, string data, Node* path = NULL);
+
+	int createFileData(std::string data);
 
     /* Creates a folder in the filesystem */
     void createFolder(string name);
@@ -40,17 +41,13 @@ public:
     /* Function will move the current location to a specified location in the filesystem */
     void goToFolder(Node* path);
 
-	vector<string> readPath(stringstream &path);
-    /* This function will get all the files and folders in the specified folder */
-    // listDir(...);
-    //void listDir();
-
     /* Add your own member-functions if needed */
 	void format();
 	void createImage(std::string realFile);
 	void writeDir(Node* currentNode, ofstream &filestream);
 	void loadImage(std::string realFile);
 	Node* readDir(vector<string> *strings, Node* parent = NULL);
+	void printData(std::string path);
     Node* getPath(string path);
 	string getAbsolutePath();
     void ls(Node* folder);

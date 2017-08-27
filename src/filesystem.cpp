@@ -2,13 +2,9 @@
 #include <sstream>
 FileSystem::FileSystem()
 {
-	MemBlockDevice mMemBlockDevice = MemBlockDevice();
+	MemBlockDevice memBlockDevice = MemBlockDevice();
     root = new Node();
     currentDir = root;
-    for (size_t i = 0; i < 250; i++)
-    {
-        isEmpty[i] = true;
-    }
     // Node *temp = new Node("folder1",-1,root);
     // temp->createChild(new Node("folder2",-1,temp));
     // root->createChild(temp);
@@ -24,29 +20,53 @@ FileSystem::~FileSystem()
 	delete root;
 }
 //Creates a new file
-void FileSystem::createFile(string name, Node* path)
+bool FileSystem::createFile(string name, string data, Node* path)
 {
-    int blockLocation = -1;
-    for (size_t i = 0; i < 250; i++) {
-        if(isEmpty[i])
-        {
-            std::cout << "tom plats på i : " << i << std::endl;
-            blockLocation = i;
-            isEmpty[i] = false;
-            i = 250;
-        }
-    }
-    if (path != NULL)
-    {
-        Node *file = new Node(name,blockLocation,currentDir);
-        path->createChild(file);
-    }
-    else
-    {
-        Node *file = new Node(name,blockLocation,currentDir);
-        currentDir->createChild(file);
-
-    }
+	int dataLocation = createFileData(data);
+	if(dataLocation != -1)
+	{
+		if (path != NULL)
+	    {
+	        Node *file = new Node(name,dataLocation,currentDir);
+	        path->createChild(file);
+			return true;
+	    }
+	    else
+	    {
+	        Node *file = new Node(name,dataLocation,currentDir);
+	        currentDir->createChild(file);
+			return true;
+	    }
+	}
+	return false;
+}
+int FileSystem::createFileData(std::string data)
+{
+	if(memBlockDevice.spaceLeft() > 0)
+	{
+		int dataLocation = memBlockDevice.getEmptyBlockIndex();
+		if(data.length() < (uint)memBlockDevice[dataLocation].size())
+		{
+			char* cStr = new char[memBlockDevice[dataLocation].size()]{0};
+			for(uint i = 0; i < data.length(); i++)
+			{
+				cStr[i] = data[i];
+			}
+			memBlockDevice.writeBlock(dataLocation,cStr);
+			delete[] cStr;
+		}
+		else if(data.length() > (uint)memBlockDevice[dataLocation].size())
+		{
+			data.erase(memBlockDevice[dataLocation].size(), data.length());
+			memBlockDevice.writeBlock(dataLocation,data.c_str());
+		}
+		else
+		{
+			memBlockDevice.writeBlock(dataLocation,data.c_str());
+		}
+		return dataLocation;
+	}
+	return -1;
 }
 //Creates a new folder
 void FileSystem::createFolder(string name)
@@ -67,7 +87,6 @@ bool FileSystem::removeFile(string name)
             {
                 fileFound = true;
                 Node *temp = allChildren.at(i);
-                this->isEmpty[temp->getDataLocation()] = true;
                 std::cout << "temp->getdata() = " << temp->getDataLocation() << std::endl;
                 //std::cout << "FOUND : " << allChildren.at(i)->getName() << std::endl;
                 currentDir->removeChildAt(i);
@@ -121,21 +140,22 @@ void FileSystem::goToFolder(Node* path)
     }
 }
 //Converts a stringstream to a vector of strings seperated by "/"
-vector<string> FileSystem::readPath(stringstream &path)
-{
-	string segment;
-	vector<string> segList;
-
-	while(std::getline(path, segment, '/'))
-	{
-		segList.push_back(segment);
-	}
-	return segList;
-}
+// vector<string> FileSystem::readPath(stringstream &path)
+// {
+// 	string segment;
+// 	vector<string> segList;
+//
+// 	while(std::getline(path, segment, '/'))
+// 	{
+// 		segList.push_back(segment);
+// 	}
+// 	return segList;
+// }
 void FileSystem::format()
 {
 	delete root;
 	root = new Node();
+	memBlockDevice.reset();
 }
 void FileSystem::createImage(std::string realFile)
 {
@@ -144,6 +164,7 @@ void FileSystem::createImage(std::string realFile)
 	writeDir(root, filestream);
 	filestream.close();
 }
+//Recursive part of createImage function
 void FileSystem::writeDir(Node* currentNode, ofstream &filestream)
 {
 	string type = "";
@@ -161,8 +182,8 @@ void FileSystem::writeDir(Node* currentNode, ofstream &filestream)
 	else
 	{
 		type = "file";
-		//TODO get data from filesystem instead
-		fileContents = "hellogais";
+		int dataLocation = currentNode->getDataLocation();
+		fileContents = memBlockDevice.readBlock(dataLocation).toString();
 		filestream << type << " " << name << " " << children << " " << fileContents << endl;
 	}
 	for(int i = 0; i < currentNode->getNrOfChildren(); i++)
@@ -224,14 +245,36 @@ Node* FileSystem::readDir(vector<string>* strings, Node* parent)
 	}
 	else
 	{
+		//Write the file's data to the filesystem
 		fileContents = strings->at(0);
 		strings->erase(strings->begin());
-		//TODO: place file content in a memory block and supply it's location in the node constructor.
-		thisNode = new Node(name,0,parent);
+		int dataLocation = createFileData(fileContents);
+		thisNode = new Node(name,dataLocation,parent);
 	}
 	return thisNode;
 }
-//Returns the directory the path relates to
+void FileSystem::printData(std::string path)
+{
+	Node* node = getPath(path);
+	if(node != NULL)
+	{
+		int dataLocation = getPath(path)->getDataLocation();
+		if(dataLocation >= 0)
+		{
+			std::string data = memBlockDevice.readBlock(dataLocation).toString();
+			std::cout << "'" << data << "'" << std::endl;
+		}
+		else
+		{
+			std::cout << "Cannot print file contents: Target is a directory." << std::endl;
+		}
+	}
+	else
+	{
+		std::cout << "File not found." << std::endl;
+	}
+}
+//Returns the node the path relates to
 Node* FileSystem::getPath(string path)
 {
     //Check if a path is added after command
@@ -257,13 +300,13 @@ Node* FileSystem::getPath(string path)
 		segList.push_back(segment);
     }
 
-    Node* folderNode = currentDir;
+    Node* currentNode = currentDir;
 
     //If / is first then go to root
     int i = 0;
     if (segList.at(0) == "/")
     {
-        folderNode = root;
+        currentNode = root;
         i++;
     }
 
@@ -273,25 +316,25 @@ Node* FileSystem::getPath(string path)
 		//Enter parent node
         if (segList.at(k) == "..")
         {
-			if(folderNode->getParent() == NULL)
+			if(currentNode->getParent() == NULL)
 			{
 				std::cout << "Parent folder does not exist." << std::endl;
 				return NULL;
 			}
-            folderNode = folderNode->getParent();
+            currentNode = currentNode->getParent();
         }
 		//Enter child node
-        else if (folderNode->getChild(segList.at(k)) != NULL && folderNode->getChild(segList.at(k))->isFolder())
+        else if (currentNode->getChild(segList.at(k)) != NULL)
         {
-            folderNode = folderNode->getChild(segList.at(k));
+            currentNode = currentNode->getChild(segList.at(k));
         }
-		//Node does not exist or is not a folder
+		//Node does not exist
         else
         {
             return NULL;
         }
     }
-    return folderNode;
+    return currentNode;
 }
 string FileSystem::getAbsolutePath()
 {
