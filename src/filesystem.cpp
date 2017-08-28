@@ -5,14 +5,6 @@ FileSystem::FileSystem()
 	MemBlockDevice memBlockDevice = MemBlockDevice();
     root = new Node();
     currentDir = root;
-    // Node *temp = new Node("folder1",-1,root);
-    // temp->createChild(new Node("folder2",-1,temp));
-    // root->createChild(temp);
-    // root->createChild(new Node("hejsan",-1,root));
-    // root->createChild(new Node("hejsan2",-1,root));
-    // root->createChild(new Node("hejsan3",-1,root));
-    // root->createChild(new Node("hejsan4",-1,root));
-    // root->createChild(new Node("file", 10, root));
 }
 
 FileSystem::~FileSystem()
@@ -387,24 +379,31 @@ void FileSystem::copy(Node* originalNode, Node* destinationDir)
 {
 	if(destinationDir->isFolder())
 	{
-		if(originalNode->isFolder())
+		if(destinationDir->getChild(originalNode->getName()) == NULL)
 		{
-			//Copy folder and contents
-			Node* newNode = new Node(originalNode->getName(), -1, destinationDir);
-			destinationDir->createChild(newNode);
-			//Copy all children of this directory to the new one
-			for(int i = 0; i < originalNode->getNrOfChildren(); i++)
+			if(originalNode->isFolder())
 			{
-				copy(originalNode->getChildAt(i), newNode);
+				//Copy folder and contents
+				Node* newNode = new Node(originalNode->getName(), -1, destinationDir);
+				destinationDir->createChild(newNode);
+				//Copy all children of this directory to the new one
+				for(int i = 0; i < originalNode->getNrOfChildren(); i++)
+				{
+					copy(originalNode->getChildAt(i), newNode);
+				}
+			}
+			else
+			{
+				//Copy file and contents
+				int dataLocation = memBlockDevice.getEmptyBlockIndex();
+				memBlockDevice[dataLocation] = memBlockDevice[originalNode->getDataLocation()];
+				Node* newNode = new Node(originalNode->getName(), dataLocation, destinationDir);
+				destinationDir->createChild(newNode);
 			}
 		}
 		else
 		{
-			//Copy file and contents
-			int dataLocation = memBlockDevice.getEmptyBlockIndex();
-			memBlockDevice[dataLocation] = memBlockDevice[originalNode->getDataLocation()];
-			Node* newNode = new Node(originalNode->getName(), dataLocation, destinationDir);
-			destinationDir->createChild(newNode);
+			std::cout << "A directory by the same name exists in the destination." << std::endl;
 		}
 	}
 	else
