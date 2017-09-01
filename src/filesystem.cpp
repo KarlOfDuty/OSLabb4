@@ -3,8 +3,8 @@
 FileSystem::FileSystem()
 {
 	MemBlockDevice memBlockDevice = MemBlockDevice();
-    root = new Node();
-    currentDir = root;
+	root = new Node();
+	currentDir = root;
 }
 
 FileSystem::~FileSystem()
@@ -18,17 +18,17 @@ bool FileSystem::createFile(string name, string data, Node* path)
 	if(dataLocation != -1)
 	{
 		if (path != NULL)
-	    {
-	        Node *file = new Node(name,dataLocation,currentDir);
-	        path->createChild(file);
+		{
+			Node *file = new Node(name,dataLocation,currentDir);
+			path->createChild(file);
 			return true;
-	    }
-	    else
-	    {
-	        Node *file = new Node(name,dataLocation,currentDir);
-	        currentDir->createChild(file);
+		}
+		else
+		{
+			Node *file = new Node(name,dataLocation,currentDir);
+			currentDir->createChild(file);
 			return true;
-	    }
+		}
 	}
 	return false;
 }
@@ -82,7 +82,7 @@ void FileSystem::createFolder(string path)
 		if(parentDir->getChild(name) == NULL)
 		{
 			Node *folder = new Node(name,-1,parentDir);
-	    	parentDir->createChild(folder);
+			parentDir->createChild(folder);
 			std::cout << "Directory created." << std::endl;
 		}
 		else
@@ -98,12 +98,12 @@ void FileSystem::removeFile(string path)
 	if(thisFile != NULL)
 	{
 		if (!thisFile->isFolder())
-	    {
+		{
 			//Delete data and file
 			memBlockDevice[thisFile->getDataLocation()].reset();
 			thisFile->getParent()->removeChild(thisFile->getName());
 			delete thisFile;
-	    }
+		}
 		else
 		{
 			std::cout << "Cannot remove '" << path << "': Is a directory." << std::endl;
@@ -144,14 +144,14 @@ void FileSystem::removeFile(string path)
 //Makes the current folder the node provided
 void FileSystem::goToFolder(Node* path)
 {
-    if(path->isFolder())
-    {
-        currentDir = path;
-    }
-    else
-    {
-        std::cout << "Cannot go into '" << path->getName() << "': Not a directory." << std::endl;
-    }
+	if(path->isFolder())
+	{
+		currentDir = path;
+	}
+	else
+	{
+		std::cout << "Cannot go into '" << path->getName() << "': Not a directory." << std::endl;
+	}
 }
 //Converts a stringstream to a vector of strings seperated by "/"
 // vector<string> FileSystem::readPath(stringstream &path)
@@ -291,64 +291,64 @@ void FileSystem::printData(std::string path)
 //Returns the node the path relates to
 Node* FileSystem::getPath(string path)
 {
-    //Check if a path is added after command
-    if (path.length() == 0)
-    {
-        return currentDir;
-    }
+	//Check if a path is added after command
+	if (path.length() == 0)
+	{
+		return currentDir;
+	}
 
-    string segment;
+	string segment;
 	vector<string> segList;
 
-    //Check if first char is root identifier
-    if (path[0] == '/')
-    {
-        segList.push_back("/");
-        path.erase(path.begin());
-    }
+	//Check if first char is root identifier
+	if (path[0] == '/')
+	{
+		segList.push_back("/");
+		path.erase(path.begin());
+	}
 
-    //Seperate string to find folder location
-    stringstream paths(path);
-    while(std::getline(paths, segment, '/'))
+	//Seperate string to find folder location
+	stringstream paths(path);
+	while(std::getline(paths, segment, '/'))
 	{
 		segList.push_back(segment);
-    }
+	}
 
-    Node* currentNode = currentDir;
+	Node* currentNode = currentDir;
 
-    //If / is first then go to root
-    int i = 0;
-    if (segList.at(0) == "/")
-    {
-        currentNode = root;
-        i++;
-    }
+	//If / is first then go to root
+	int i = 0;
+	if (segList.at(0) == "/")
+	{
+		currentNode = root;
+		i++;
+	}
 
-    // Find the folder, if .. is found go to parent of current folder, if not found then return NULL
-    for (size_t k = i; k < segList.size(); k++)
-    {
+	// Find the folder, if .. is found go to parent of current folder, if not found then return NULL
+	for (size_t k = i; k < segList.size(); k++)
+	{
 		//Enter parent node
-        if (segList.at(k) == "..")
-        {
+		if (segList.at(k) == "..")
+		{
 			if(currentNode->getParent() == NULL)
 			{
 				std::cout << "Parent folder does not exist." << std::endl;
 				return NULL;
 			}
-            currentNode = currentNode->getParent();
-        }
+			currentNode = currentNode->getParent();
+		}
 		//Enter child node
-        else if (currentNode->getChild(segList.at(k)) != NULL)
-        {
-            currentNode = currentNode->getChild(segList.at(k));
-        }
+		else if (currentNode->getChild(segList.at(k)) != NULL)
+		{
+			currentNode = currentNode->getChild(segList.at(k));
+		}
 		//Node does not exist
-        else
-        {
-            return NULL;
-        }
-    }
-    return currentNode;
+		else
+		{
+			return NULL;
+		}
+	}
+	return currentNode;
 }
 string FileSystem::getAbsolutePath()
 {
@@ -414,18 +414,18 @@ void FileSystem::copy(Node* originalNode, Node* destinationDir)
 //Lists all directory contents
 void FileSystem::ls(Node* folder)
 {
-    if (folder != NULL)
-    {
-        std::cout << "Listing directory contents" << std::endl;
+	if (folder != NULL)
+	{
+		std::cout << "Listing directory contents" << std::endl;
 		//Print all children
-        std::vector<string> v = folder->getAllChildrenAsString();
-        for (size_t i = 0; i < v.size(); i++)
-        {
-            std::cout << v.at(i) << std::endl;
-        }
-    }
-    else
-    {
-        std::cout << "Folder not found." << std::endl;
-    }
+		std::vector<string> v = folder->getAllChildrenAsString();
+		for (size_t i = 0; i < v.size(); i++)
+		{
+			std::cout << v.at(i) << std::endl;
+		}
+	}
+	else
+	{
+		std::cout << "Folder not found." << std::endl;
+	}
 }

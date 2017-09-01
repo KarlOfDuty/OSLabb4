@@ -10,27 +10,27 @@ using namespace std;
 class Node
 {
 private:
-    int dataLocation;
-    string name;
-    Node *parent;
-    vector<Node*> children;
+	int dataLocation;
+	string name;
+	Node *parent;
+	vector<Node*> children;
 
-  public:
-    Node(string name = "/", int dataLocation = -1, Node *parent = NULL);
-    string getName();
-    int getDataLocation();
-    int getNrOfChildren();
-    void createChild(Node *child);
-    Node* getParent();
-    Node* getChild(string childName);
+public:
+	Node(string name = "/", int dataLocation = -1, Node *parent = NULL);
+	string getName();
+	int getDataLocation();
+	int getNrOfChildren();
+	void createChild(Node *child);
+	Node* getParent();
+	Node* getChild(string childName);
 	Node* getChildAt(int index);
-    vector<Node*> getAllChildren();
-    vector<string> getAllChildrenAsString();
-    string asString();
-    bool isFolder();
-    void removeChildAt(int location);
+	vector<Node*> getAllChildren();
+	vector<string> getAllChildrenAsString();
+	string asString();
+	bool isFolder();
+	void removeChildAt(int location);
 	void removeChild(std::string childName);
-    ~Node();
+	~Node();
 };
 
 #endif

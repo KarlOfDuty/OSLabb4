@@ -2,9 +2,9 @@
 Node::Node(string name,int dataLocation, Node *parent)
 {
 	this->children = vector<Node*>();
-    this->name = name;
-    this->dataLocation = dataLocation;
-    this->parent = parent;
+	this->name = name;
+	this->dataLocation = dataLocation;
+	this->parent = parent;
 }
 Node::~Node()
 {
@@ -16,11 +16,11 @@ Node::~Node()
 }
 string Node::getName()
 {
-    return this->name;
+	return this->name;
 }
 int Node::getDataLocation()
 {
-    return this->dataLocation;
+	return this->dataLocation;
 }
 Node* Node::getParent()
 {
@@ -28,15 +28,15 @@ Node* Node::getParent()
 }
 Node* Node::getChild(string childName)
 {
-    Node* temp = NULL;
-    for (size_t i = 0; i < children.size(); i++)
-    {
-        if (children.at(i)->getName() == childName)
-        {
-            temp = children.at(i);
-        }
-    }
-    return temp;
+	Node* temp = NULL;
+	for (size_t i = 0; i < children.size(); i++)
+	{
+		if (children.at(i)->getName() == childName)
+		{
+			temp = children.at(i);
+		}
+	}
+	return temp;
 }
 Node* Node::getChildAt(int index)
 {
@@ -44,43 +44,43 @@ Node* Node::getChildAt(int index)
 }
 int Node::getNrOfChildren()
 {
-    return this->children.size();
+	return this->children.size();
 }
 void Node::createChild(Node *child)
 {
-    this->children.push_back(child);
+	this->children.push_back(child);
 }
 vector<Node*> Node::getAllChildren()
 {
-    return children;
+	return children;
 }
 vector<string> Node::getAllChildrenAsString()
 {
-    int size = this->children.size();
-    std::vector<string> allChildren;
-    for (int i = 0; i < size; i++)
-    {
-        allChildren.push_back(this->children.at(i)->asString());
-    }
-    return allChildren;
+	int size = this->children.size();
+	std::vector<string> allChildren;
+	for (int i = 0; i < size; i++)
+	{
+		allChildren.push_back(this->children.at(i)->asString());
+	}
+	return allChildren;
 }
 string Node::asString()
 {
-    if (isFolder())
-    {
-        string folderName = "\033[32m" + this->name + "\033[0m";
-        return folderName;
-    }
-    string fileName = "\033[1;34m" + this->name + "\033[0m";
-    return fileName;
+	if (isFolder())
+	{
+		string folderName = "\033[32m" + this->name + "\033[0m";
+		return folderName;
+	}
+	string fileName = "\033[1;34m" + this->name + "\033[0m";
+	return fileName;
 }
 bool Node::isFolder()
 {
-    return this->dataLocation == -1;
+	return this->dataLocation == -1;
 }
 void Node::removeChildAt(int location)
 {
-    children.erase(children.begin()+location);
+	children.erase(children.begin()+location);
 }
 void Node::removeChild(std::string childName)
 {
