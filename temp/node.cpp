@@ -13,7 +13,7 @@ Node* Node::getParent()
 {
 		return this->parent;
 }
-void Node::createChild(Node child)
+void Node::addChild(Node child)
 {
     this->children.push_back(child);
 }

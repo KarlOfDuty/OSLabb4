@@ -18,7 +18,7 @@ private:
   public:
     Node(string name, int data = -1, Node *parent = NULL);
 	Node* getParent();
-    void createChild(Node child);
+    void addChild(Node child);
     Node getParent();
     string asString();
     vector<string> getAllChildren();
