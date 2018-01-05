@@ -20,7 +20,7 @@ public:
 	string getName();
 	int getDataLocation();
 	int getNrOfChildren();
-	void createChild(Node *child);
+	void addChild(Node *child);
 	Node* getParent();
 	Node* getChild(string childName);
 	Node* getChildAt(int index);

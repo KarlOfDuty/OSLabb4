@@ -20,13 +20,13 @@ bool FileSystem::createFile(string name, string data, Node* path)
 		if (path != NULL)
 		{
 			Node *file = new Node(name,dataLocation,currentDir);
-			path->createChild(file);
+			path->addChild(file);
 			return true;
 		}
 		else
 		{
 			Node *file = new Node(name,dataLocation,currentDir);
-			currentDir->createChild(file);
+			currentDir->addChild(file);
 			return true;
 		}
 	}
@@ -82,7 +82,7 @@ void FileSystem::createFolder(string path)
 		if(parentDir->getChild(name) == NULL)
 		{
 			Node *folder = new Node(name,-1,parentDir);
-			parentDir->createChild(folder);
+			parentDir->addChild(folder);
 			std::cout << "Directory created." << std::endl;
 		}
 		else
@@ -254,7 +254,7 @@ Node* FileSystem::readDir(vector<string>* strings, Node* parent)
 		thisNode = new Node(name,-1,parent);
 		for(int i = 0; i < std::stoi(children); i++)
 		{
-			thisNode->createChild(readDir(strings,thisNode));
+			thisNode->addChild(readDir(strings,thisNode));
 		}
 	}
 	else
@@ -385,7 +385,7 @@ void FileSystem::copy(Node* originalNode, Node* destinationDir)
 			{
 				//Copy folder and contents
 				Node* newNode = new Node(originalNode->getName(), -1, destinationDir);
-				destinationDir->createChild(newNode);
+				destinationDir->addChild(newNode);
 				//Copy all children of this directory to the new one
 				for(int i = 0; i < originalNode->getNrOfChildren(); i++)
 				{
@@ -398,7 +398,7 @@ void FileSystem::copy(Node* originalNode, Node* destinationDir)
 				int dataLocation = memBlockDevice.getEmptyBlockIndex();
 				memBlockDevice[dataLocation] = memBlockDevice[originalNode->getDataLocation()];
 				Node* newNode = new Node(originalNode->getName(), dataLocation, destinationDir);
-				destinationDir->createChild(newNode);
+				destinationDir->addChild(newNode);
 			}
 		}
 		else

@@ -46,7 +46,7 @@ int Node::getNrOfChildren()
 {
 	return this->children.size();
 }
-void Node::createChild(Node *child)
+void Node::addChild(Node *child)
 {
 	this->children.push_back(child);
 }
