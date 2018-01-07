@@ -8,7 +8,7 @@ Node::Node(string name,int dataLocation, Node *parent)
 }
 Node::~Node()
 {
-	for(uint i = 0; i < children.size(); i++)
+	for(size_t i = 0; i < children.size(); i++)
 	{
 		delete children[i];
 	}
@@ -56,9 +56,9 @@ vector<Node*> Node::getAllChildren()
 }
 vector<string> Node::getAllChildrenAsString()
 {
-	int size = this->children.size();
+	size_t size = this->children.size();
 	std::vector<string> allChildren;
-	for (int i = 0; i < size; i++)
+	for (size_t i = 0; i < size; i++)
 	{
 		allChildren.push_back(this->children.at(i)->asString());
 	}
@@ -84,7 +84,7 @@ void Node::removeChildAt(int location)
 }
 void Node::removeChild(std::string childName)
 {
-	for(uint i = 0; i < children.size(); i++)
+	for(size_t i = 0; i < children.size(); i++)
 	{
 		if(children[i]->getName() == childName)
 		{

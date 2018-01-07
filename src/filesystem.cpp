@@ -37,17 +37,17 @@ int FileSystem::createFileData(std::string data)
 	if(memBlockDevice.spaceLeft() > 0)
 	{
 		int dataLocation = memBlockDevice.getEmptyBlockIndex();
-		if(data.length() < (uint)memBlockDevice[dataLocation].size())
+		if(data.length() < (size_t)memBlockDevice[dataLocation].size())
 		{
 			char* cStr = new char[memBlockDevice[dataLocation].size()]{0};
-			for(uint i = 0; i < data.length(); i++)
+			for(size_t i = 0; i < data.length(); i++)
 			{
 				cStr[i] = data[i];
 			}
 			memBlockDevice.writeBlock(dataLocation,cStr);
 			delete[] cStr;
 		}
-		else if(data.length() > (uint)memBlockDevice[dataLocation].size())
+		else if(data.length() > (size_t)memBlockDevice[dataLocation].size())
 		{
 			data.erase(memBlockDevice[dataLocation].size(), data.length());
 			memBlockDevice.writeBlock(dataLocation,data.c_str());

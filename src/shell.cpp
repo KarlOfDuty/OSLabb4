@@ -67,7 +67,7 @@ int main(void) {
 						std::cout << "Enter file contents: ";
 						getline(std::cin, fileContents);
 						//Replace spaces as our image reading does not support them
-						for(uint i = 0; i < fileContents.length(); i++)
+						for(size_t i = 0; i < fileContents.length(); i++)
 						{
 							if(fileContents[i] == ' ')
 							{
